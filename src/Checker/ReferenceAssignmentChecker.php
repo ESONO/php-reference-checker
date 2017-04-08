@@ -14,6 +14,12 @@ class ReferenceAssignmentChecker
      */
     public function check($targetPath, $classRepositoryPath)
     {
+        $this->init();
         return [];
+    }
+
+    private function init()
+    {
+        ini_set('xdebug.max_nesting_level', 3000);
     }
 }
