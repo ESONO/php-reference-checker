@@ -4,6 +4,7 @@
 namespace umulmrum\PhpReferenceChecker\Checker;
 
 
+use PhpParser\Error;
 use PhpParser\Node\Expr\AssignRef;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\Class_;
@@ -92,6 +93,9 @@ class ReferenceAssignmentChecker
             $methods = $node->getMethods();
             foreach ($methods as $method) {
                 $stmts = $method->getStmts();
+                if (!is_iterable($stmts)) {
+                    continue;
+                }
                 foreach ($stmts as $stmt) {
                     if (false === $stmt instanceof AssignRef) {
                         continue;
@@ -115,7 +119,7 @@ class ReferenceAssignmentChecker
                         $warnings[] = new NonReferenceAssignmentWarning(basename($path), $expr->getLine(), 1.0);
                         continue;
                     }
-                    if ($referenceReturns > 0) {
+                    if ($referenceReturns > 0 && $nonReferenceReturns > 0) {
                         // this may be ok
                         $warnings[] = new NonReferenceAssignmentWarning(
                             basename($path),
@@ -171,7 +175,13 @@ class ReferenceAssignmentChecker
     private function addToRepository($filePath, MethodRepository $repository)
     {
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
-        $nodes = $parser->parse(file_get_contents($filePath));
+        try {
+            $nodes = $parser->parse(file_get_contents($filePath));
+        } catch (Error $e) {
+            $this->logger->warning($filePath . ': ' . $e->getMessage());
+            return;
+        }
+
         foreach ($nodes as $node) {
             if (false === $node instanceof Class_) {
                 continue; // TODO check functions defined outside of classes
