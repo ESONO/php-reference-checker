@@ -54,7 +54,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
     {
         static::assertEquals(
             [
-                new NonReferenceAssignmentWarning('ReferenceAssignmentCheckerFixture.php', 13)
+                new NonReferenceAssignmentWarning('ReferenceAssignmentCheckerFixture.php', 13, 1.0)
             ],
             $this->actualResult);
     }
