@@ -1,13 +1,13 @@
 <?php
 
-class FiftyPercentOne {
+class TwentyFivePercentOne {
     public function foo()
     {
         return 'foo';
     }
 }
 
-class FiftyPercentTwo {
+class TwentyFivePercentTwo {
     public function &foo()
     {
         $foo = 'foo';
@@ -15,21 +15,21 @@ class FiftyPercentTwo {
     }
 }
 
-class FiftyPercentThree {
+class TwentyFivePercentThree {
     public function foo()
     {
         return 'foo';
     }
 }
 
-class FiftyPercentFour {
+class TwentyFivePercentFour {
     public function foo()
     {
         return 'foo';
     }
 }
 
-class FiftyPercentCaller {
+class TwentyFivePercentCaller {
     public function caller()
     {
         $cls = new FiftyPercentOne();
