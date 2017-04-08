@@ -91,13 +91,25 @@ class ReferenceAssignmentChecker
                      * @var MethodCall $expr
                      */
                     $name = $expr->name;
-                    $nonReferenceReturns = isset($repository->getNonReferenceReturnMethods()[$name]) ?: 0;
-                    $referenceReturns = isset($repository->getReferenceReturnMethods()[$name]) ?: 0;
+                    $nonReferenceReturns = isset($repository->getNonReferenceReturnMethods()[$name]) ? $repository->getNonReferenceReturnMethods()[$name] : 0;
+                    $referenceReturns = isset($repository->getReferenceReturnMethods()[$name]) ? $repository->getReferenceReturnMethods()[$name] : 0;
 
-                    if ($nonReferenceReturns > 0 && $referenceReturns === 0) {
+                    if ($referenceReturns === 0) {
                         // we know it is not ok!
                         $warnings[] = new NonReferenceAssignmentWarning(basename($path), $expr->getLine(), 1.0);
+                        continue;
                     }
+                    if ($referenceReturns > 0) {
+                        // this may be ok
+                        $warnings[] = new NonReferenceAssignmentWarning(
+                            basename($path),
+                            $expr->getLine(),
+                            $referenceReturns / ($nonReferenceReturns + $referenceReturns)
+                        );
+                        continue;
+                    }
+
+                    // todo: handle unknown method names
                 }
             }
         }
