@@ -114,7 +114,7 @@ class ReferenceAssignmentChecker
                     $nonReferenceReturns = isset($repository->getNonReferenceReturnMethods()[$name]) ? $repository->getNonReferenceReturnMethods()[$name] : 0;
                     $referenceReturns = isset($repository->getReferenceReturnMethods()[$name]) ? $repository->getReferenceReturnMethods()[$name] : 0;
 
-                    if ($referenceReturns === 0) {
+                    if ($referenceReturns === 0 && $nonReferenceReturns > 0) {
                         // we know it is not ok!
                         $warnings[] = new NonReferenceAssignmentWarning(basename($path), $expr->getLine(), 1.0);
                         continue;
