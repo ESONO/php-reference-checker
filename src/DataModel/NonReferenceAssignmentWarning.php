@@ -14,15 +14,21 @@ class NonReferenceAssignmentWarning
      * @var int
      */
     private $line;
+    /**
+     * @var int
+     */
+    private $probability;
 
     /**
      * @param string $file
-     * @param int $line
+     * @param int    $line
+     * @param int    $probability
      */
-    public function __construct($file, $line)
+    public function __construct($file, $line, $probability)
     {
         $this->file = $file;
         $this->line = $line;
+        $this->probability = $probability;
     }
 
     /**
@@ -39,5 +45,13 @@ class NonReferenceAssignmentWarning
     public function getLine()
     {
         return $this->line;
+    }
+
+    /**
+     * @return int
+     */
+    public function getProbability()
+    {
+        return $this->probability;
     }
 }
