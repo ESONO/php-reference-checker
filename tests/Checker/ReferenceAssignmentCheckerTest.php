@@ -29,21 +29,30 @@ class ReferenceAssignmentCheckerTest extends TestCase
     public function testNestingLevel()
     {
         $this->givenAReferenceAssignmentChecker();
-        $this->whenICallCheckOn(__DIR__ . '/../fixtures/ReferenceAssignmentCheckerFixture.php');
+        $this->whenICallCheckOn(
+            __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerFixture.php',
+            __DIR__.'/../fixtures/FileAndFolder'
+        );
         $this->thenTheMaxSettingLevelShouldBeFalseOrAt(3000);
     }
 
     public function testCheckOnOneFile()
     {
         $this->givenAReferenceAssignmentChecker();
-        $this->whenICallCheckOn(__DIR__ . '/../fixtures/ReferenceAssignmentCheckerFixture.php');
+        $this->whenICallCheckOn(
+            __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerFixture.php',
+            __DIR__ . '/../fixtures/FileAndFolder'
+        );
         $this->thenIShouldReceiveANonReferenceAssignmentWarning();
     }
 
     public function testCheckOnDirectory()
     {
         $this->givenAReferenceAssignmentChecker();
-        $this->whenICallCheckOn(__DIR__ . '/../fixtures');
+        $this->whenICallCheckOn(
+            __DIR__ . '/../fixtures/FileAndFolder',
+            __DIR__ . '/../fixtures/FileAndFolder'
+        );
         $this->thenIShouldReceiveANonReferenceAssignmentWarning();
     }
 
@@ -52,9 +61,9 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->checker = new ReferenceAssignmentChecker();
     }
 
-    private function whenICallCheckOn($checkFilePath)
+    private function whenICallCheckOn($checkFilePath, $repoPath)
     {
-        $this->actualResult = $this->checker->check($checkFilePath, __DIR__ . '/../fixtures/');
+        $this->actualResult = $this->checker->check($checkFilePath, $repoPath);
     }
 
     private function thenIShouldReceiveANonReferenceAssignmentWarning()
