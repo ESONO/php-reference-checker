@@ -108,15 +108,12 @@ class ReferenceAssignmentChecker
                         );
                         continue;
                     }
-
                     // todo: handle unknown method names
                 }
             }
         }
 
-
         return $warnings;
-
     }
 
     /**
@@ -146,7 +143,6 @@ class ReferenceAssignmentChecker
 
     private function addToRepository($filePath, MethodRepository $repository)
     {
-
         $referenceReturnMethods = $repository->getReferenceReturnMethods();
         $nonReferenceReturnMethods = $repository->getNonReferenceReturnMethods();
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
