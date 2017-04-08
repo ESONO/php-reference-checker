@@ -47,7 +47,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
 
     private function whenICallCheck()
     {
-        $this->actualResult = $this->checker->check(__DIR__ . '/../fixtures/ReferenceAssignmentCheckerFixture.php', '');
+        $this->actualResult = $this->checker->check(__DIR__ . '/../fixtures/ReferenceAssignmentCheckerFixture.php', __DIR__ . '/../fixtures/');
     }
 
     private function thenIShouldReceiveANonReferenceAssignmentWarning()
