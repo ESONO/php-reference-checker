@@ -29,22 +29,67 @@ class ReferenceAssignmentCheckerTest extends TestCase
     public function testNestingLevel()
     {
         $this->givenAReferenceAssignmentChecker();
-        $this->whenICallCheckOn(__DIR__ . '/../fixtures/ReferenceAssignmentCheckerFixture.php');
+        $this->whenICallCheckOn(
+            __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerFixture.php',
+            __DIR__.'/../fixtures/FileAndFolder'
+        );
         $this->thenTheMaxSettingLevelShouldBeFalseOrAt(3000);
     }
 
     public function testCheckOnOneFile()
     {
         $this->givenAReferenceAssignmentChecker();
-        $this->whenICallCheckOn(__DIR__ . '/../fixtures/ReferenceAssignmentCheckerFixture.php');
-        $this->thenIShouldReceiveANonReferenceAssignmentWarning();
+        $this->whenICallCheckOn(
+            __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerFixture.php',
+            __DIR__ . '/../fixtures/FileAndFolder'
+        );
+        $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
+            'ReferenceAssignmentCheckerFixture.php',
+            13,
+            1.0
+        );
     }
 
     public function testCheckOnDirectory()
     {
         $this->givenAReferenceAssignmentChecker();
-        $this->whenICallCheckOn(__DIR__ . '/../fixtures');
-        $this->thenIShouldReceiveANonReferenceAssignmentWarning();
+        $this->whenICallCheckOn(
+            __DIR__ . '/../fixtures/FileAndFolder',
+            __DIR__ . '/../fixtures/FileAndFolder'
+        );
+        $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
+            'ReferenceAssignmentCheckerFixture.php',
+            13,
+            1.0
+        );
+    }
+
+    public function testFiftyPercent()
+    {
+        $this->givenAReferenceAssignmentChecker();
+        $this->whenICallCheckOn(
+            __DIR__.'/../fixtures/Certainty/50Percent.php',
+            __DIR__.'/../fixtures/Certainty/50Percent.php'
+        );
+        $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
+            '50Percent.php',
+            23,
+            0.5
+        );
+    }
+
+    public function testTwentyFivePercent()
+    {
+        $this->givenAReferenceAssignmentChecker();
+        $this->whenICallCheckOn(
+            __DIR__.'/../fixtures/Certainty/25Percent.php',
+            __DIR__.'/../fixtures/Certainty/25Percent.php'
+        );
+        $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
+            '25Percent.php',
+            37,
+            0.25
+        );
     }
 
     private function givenAReferenceAssignmentChecker()
@@ -52,16 +97,16 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->checker = new ReferenceAssignmentChecker();
     }
 
-    private function whenICallCheckOn($checkFilePath)
+    private function whenICallCheckOn($checkFilePath, $repoPath)
     {
-        $this->actualResult = $this->checker->check($checkFilePath, __DIR__ . '/../fixtures/');
+        $this->actualResult = $this->checker->check($checkFilePath, $repoPath);
     }
 
-    private function thenIShouldReceiveANonReferenceAssignmentWarning()
+    private function thenIShouldReceiveANonReferenceAssignmentWarningWith($file, $line, $certainty)
     {
         static::assertEquals(
             [
-                new NonReferenceAssignmentWarning('ReferenceAssignmentCheckerFixture.php', 13, 1.0)
+                new NonReferenceAssignmentWarning($file, $line, $certainty)
             ],
             $this->actualResult);
     }

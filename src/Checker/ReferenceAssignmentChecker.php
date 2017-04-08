@@ -91,20 +91,29 @@ class ReferenceAssignmentChecker
                      * @var MethodCall $expr
                      */
                     $name = $expr->name;
-                    $nonReferenceReturns = isset($repository->getNonReferenceReturnMethods()[$name]) ?: 0;
-                    $referenceReturns = isset($repository->getReferenceReturnMethods()[$name]) ?: 0;
+                    $nonReferenceReturns = isset($repository->getNonReferenceReturnMethods()[$name]) ? $repository->getNonReferenceReturnMethods()[$name] : 0;
+                    $referenceReturns = isset($repository->getReferenceReturnMethods()[$name]) ? $repository->getReferenceReturnMethods()[$name] : 0;
 
-                    if ($nonReferenceReturns > 0 && $referenceReturns === 0) {
+                    if ($referenceReturns === 0) {
                         // we know it is not ok!
                         $warnings[] = new NonReferenceAssignmentWarning(basename($path), $expr->getLine(), 1.0);
+                        continue;
                     }
+                    if ($referenceReturns > 0) {
+                        // this may be ok
+                        $warnings[] = new NonReferenceAssignmentWarning(
+                            basename($path),
+                            $expr->getLine(),
+                            $referenceReturns / ($nonReferenceReturns + $referenceReturns)
+                        );
+                        continue;
+                    }
+                    // todo: handle unknown method names
                 }
             }
         }
 
-
         return $warnings;
-
     }
 
     /**
@@ -114,37 +123,48 @@ class ReferenceAssignmentChecker
      */
     private function buildMethodRepository($classRepositoryPath)
     {
+        if (is_file($classRepositoryPath)) {
+            return $this->addToRepository($classRepositoryPath, new MethodRepository([], []));
+        }
         $finder = new Finder();
         $finder
             ->in($classRepositoryPath)
             ->files()
             ->name('*.php');
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
 
-        $referenceReturnMethods = [];
-        $nonReferenceReturnMethods = [];
 
+        $repo = new MethodRepository([], []);
         foreach ($finder as $file) {
-            $nodes = $parser->parse(file_get_contents($file->getPathname()));
-            foreach ($nodes as $node) {
-                if (false === $node instanceof Class_) {
-                    continue; // TODO check functions defined outside of classes
-                }
-                /**
-                 * @var Class_ $node
-                 */
-                foreach ($node->getMethods() as $method) {
-                    if (true === $method->byRef) {
-                        if (false === isset($referenceReturnMethods[$method->name])) {
-                            $referenceReturnMethods[$method->name] = 0;
-                        }
-                        $referenceReturnMethods[$method->name]++;
-                    } else {
-                        if (false === isset($nonReferenceReturnMethods[$method->name])) {
-                            $nonReferenceReturnMethods[$method->name] = 0;
-                        }
-                        $nonReferenceReturnMethods[$method->name]++;
+            $repo = $this->addToRepository($file->getPathname(), $repo);
+        }
+
+        return $repo;
+    }
+
+    private function addToRepository($filePath, MethodRepository $repository)
+    {
+        $referenceReturnMethods = $repository->getReferenceReturnMethods();
+        $nonReferenceReturnMethods = $repository->getNonReferenceReturnMethods();
+        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $nodes = $parser->parse(file_get_contents($filePath));
+        foreach ($nodes as $node) {
+            if (false === $node instanceof Class_) {
+                continue; // TODO check functions defined outside of classes
+            }
+            /**
+             * @var Class_ $node
+             */
+            foreach ($node->getMethods() as $method) {
+                if (true === $method->byRef) {
+                    if (false === isset($referenceReturnMethods[$method->name])) {
+                        $referenceReturnMethods[$method->name] = 0;
                     }
+                    $referenceReturnMethods[$method->name]++;
+                } else {
+                    if (false === isset($nonReferenceReturnMethods[$method->name])) {
+                        $nonReferenceReturnMethods[$method->name] = 0;
+                    }
+                    $nonReferenceReturnMethods[$method->name]++;
                 }
             }
         }
