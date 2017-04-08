@@ -4,6 +4,7 @@
 namespace umulmrum\PhpReferenceChecker\Checker;
 
 
+use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use umulmrum\PhpReferenceChecker\DataModel\NonReferenceAssignmentWarning;
 
@@ -94,7 +95,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
 
     private function givenAReferenceAssignmentChecker()
     {
-        $this->checker = new ReferenceAssignmentChecker();
+        $this->checker = new ReferenceAssignmentChecker(new Logger('test'));
     }
 
     private function whenICallCheckOn($checkFilePath, $repoPath)

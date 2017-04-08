@@ -1,9 +1,11 @@
 {
     "name": "umulmrum/php-reference-checker",
-    "type": "library",
+    "type": "project",
     "require": {
         "nikic/php-parser": "^3.0",
-        "symfony/finder": "~3.2"
+        "sensio/distribution-bundle": "^5.0",
+        "symfony/monolog-bundle": "^3.0.2",
+        "symfony/symfony" : "~3.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.1"
@@ -13,11 +15,38 @@
         {
             "name": "Stefan Kruppa",
             "email": "stefan@umulmrum.de"
+        },
+        {
+            "name": "Matthias Derer",
+            "email": "matthias.derer@gmail.com"
         }
     ],
     "autoload": {
+        "classmap": [ "app/AppKernel.php", "app/AppCache.php" ],
         "psr-4": {
             "umulmrum\\PhpReferenceChecker\\": ["src", "tests"]
         }
+    },
+    "scripts": {
+        "symfony-scripts": [
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache"
+        ],
+        "post-install-cmd": [
+            "@symfony-scripts"
+        ],
+        "post-update-cmd": [
+            "@symfony-scripts"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "symfony-app-dir": "app",
+        "symfony-bin-dir": "bin",
+        "symfony-var-dir": "var",
+        "symfony-web-dir": "web",
+        "symfony-tests-dir": "tests",
+        "symfony-assets-install": "relative"
     }
 }

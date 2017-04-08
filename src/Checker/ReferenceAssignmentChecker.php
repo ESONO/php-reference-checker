@@ -8,6 +8,7 @@ use PhpParser\Node\Expr\AssignRef;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\ParserFactory;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use umulmrum\PhpReferenceChecker\DataModel\MethodRepository;
@@ -15,6 +16,16 @@ use umulmrum\PhpReferenceChecker\DataModel\NonReferenceAssignmentWarning;
 
 class ReferenceAssignmentChecker
 {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * @param string $targetPath
      * @param string $classRepositoryPath
@@ -25,14 +36,15 @@ class ReferenceAssignmentChecker
     {
         $this->init();
         $repo = $this->buildMethodRepository($classRepositoryPath);
-        $warnings = $this->checkTargetPath($targetPath, $repo);
 
-        return $warnings;
+        return $this->checkTargetPath($targetPath, $repo);
     }
 
     private function init()
     {
+        $this->logger->info('init: start');
         ini_set('xdebug.max_nesting_level', 3000);
+        $this->logger->info('init: end');
     }
 
     /**
@@ -43,7 +55,10 @@ class ReferenceAssignmentChecker
      */
     private function checkTargetPath($targetPath, MethodRepository $repository)
     {
+        $this->logger->info('checkTargetPath: start');
         if (is_file($targetPath)) {
+            $this->logger->info('checkTargetPath: end');
+
             return $this->checkFile($targetPath, $repository);
         }
         $finder = new Finder();
@@ -57,6 +72,7 @@ class ReferenceAssignmentChecker
         foreach ($finder as $file) {
             $warnings = array_merge($warnings, $this->checkFile($file->getPathname(), $repository));
         }
+        $this->logger->info('checkTargetPath: end');
 
         return $warnings;
     }
@@ -123,8 +139,14 @@ class ReferenceAssignmentChecker
      */
     private function buildMethodRepository($classRepositoryPath)
     {
+        $this->logger->info('buildMethodRepository: start');
         if (is_file($classRepositoryPath)) {
-            return $this->addToRepository($classRepositoryPath, new MethodRepository([], []));
+            $this->logger->info('buildMethodRepository: end');
+            $repo = new MethodRepository([], []);
+
+            $this->addToRepository($classRepositoryPath, $repo);
+
+            return $repo;
         }
         $finder = new Finder();
         $finder
@@ -135,16 +157,19 @@ class ReferenceAssignmentChecker
 
         $repo = new MethodRepository([], []);
         foreach ($finder as $file) {
-            $repo = $this->addToRepository($file->getPathname(), $repo);
+            $this->addToRepository($file->getPathname(), $repo);
         }
+        $this->logger->info('buildMethodRepository: end');
 
         return $repo;
     }
 
+    /**
+     * @param $filePath
+     * @param MethodRepository $repository
+     */
     private function addToRepository($filePath, MethodRepository $repository)
     {
-        $referenceReturnMethods = $repository->getReferenceReturnMethods();
-        $nonReferenceReturnMethods = $repository->getNonReferenceReturnMethods();
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $nodes = $parser->parse(file_get_contents($filePath));
         foreach ($nodes as $node) {
@@ -156,19 +181,11 @@ class ReferenceAssignmentChecker
              */
             foreach ($node->getMethods() as $method) {
                 if (true === $method->byRef) {
-                    if (false === isset($referenceReturnMethods[$method->name])) {
-                        $referenceReturnMethods[$method->name] = 0;
-                    }
-                    $referenceReturnMethods[$method->name]++;
+                    $repository->addReferenceReturnMethod($method->name);
                 } else {
-                    if (false === isset($nonReferenceReturnMethods[$method->name])) {
-                        $nonReferenceReturnMethods[$method->name] = 0;
-                    }
-                    $nonReferenceReturnMethods[$method->name]++;
+                    $repository->addNonReferenceReturnMethod($method->name);
                 }
             }
         }
-
-        return new MethodRepository($referenceReturnMethods, $nonReferenceReturnMethods);
     }
 }

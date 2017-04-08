@@ -45,4 +45,19 @@ class MethodRepository
         return $this->nonReferenceReturnMethods;
     }
 
+    public function addReferenceReturnMethod($methodName)
+    {
+        if (false === isset($this->referenceReturnMethods[$methodName])) {
+            $this->referenceReturnMethods[$methodName] = 0;
+        }
+        $this->referenceReturnMethods[$methodName]++;
+    }
+
+    public function addNonReferenceReturnMethod($methodName)
+    {
+        if (false === isset($this->nonReferenceReturnMethods[$methodName])) {
+            $this->nonReferenceReturnMethods[$methodName] = 0;
+        }
+        $this->nonReferenceReturnMethods[$methodName]++;
+    }
 }
