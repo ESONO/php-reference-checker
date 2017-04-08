@@ -75,8 +75,10 @@ EOF
             $table->addRow([
                 $warning->getFile(),
                 $warning->getLine(),
-                $warning->getProbability(),
+                number_format($warning->getProbability(), 2),
             ]);
         }
+
+        $table->render();
     }
 }
