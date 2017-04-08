@@ -26,6 +26,13 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->actualResult = null;
     }
 
+    public function testNestingLevel()
+    {
+        $this->givenAReferenceAssignmentChecker();
+        $this->whenICallCheck();
+        $this->thenTheMaxSettingLevelShouldBeFalseOrAt(3000);
+    }
+
     public function testCheck()
     {
         $this->givenAReferenceAssignmentChecker();
@@ -50,5 +57,11 @@ class ReferenceAssignmentCheckerTest extends TestCase
                 new NonReferenceAssignmentWarning('ReferenceAssignmentCheckerFixture.php', 13)
             ],
             $this->actualResult);
+    }
+
+    private function thenTheMaxSettingLevelShouldBeFalseOrAt($level)
+    {
+        $expected = [$level, false];
+        static::assertContains(ini_get('xdebug.max_nesting_level'), $expected);
     }
 }
