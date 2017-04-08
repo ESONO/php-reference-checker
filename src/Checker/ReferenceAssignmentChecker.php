@@ -43,62 +43,65 @@ class ReferenceAssignmentChecker
      */
     private function checkTargetPath($targetPath, MethodRepository $repository)
     {
-        $warnings = [];
-        $finder = new Finder();
         if (is_file($targetPath)) {
-            $finder
-                ->in(dirname($targetPath))
-                ->depth(0)
-                ->files()
-                ->name(basename($targetPath))
-            ;
-        } else {
-            $finder
-                ->in($targetPath)
-                ->files()
-                ->name('*.php')
-            ;
+            return $this->checkFile($targetPath, $repository);
         }
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $finder = new Finder();
+
+        $warnings = [];
+        $finder
+            ->in($targetPath)
+            ->files()
+            ->name('*.php');
 
         foreach ($finder as $file) {
-            $nodes = $parser->parse(file_get_contents($file->getPathname()));
-            foreach ($nodes as $node) {
-                if (false === $node instanceof Class_) {
-                    continue;
-                }
-                /**
-                 * @var Class_ $node
-                 */
-                $methods = $node->getMethods();
-                foreach ($methods as $method) {
-                    $stmts = $method->getStmts();
-                    foreach ($stmts as $stmt) {
-                        if (false === $stmt instanceof AssignRef) {
-                            continue;
-                        }
-                        /**
-                         * @var AssignRef $stmt
-                         */
-                        $expr = $stmt->expr;
-                        if (false === $expr instanceof MethodCall) {
-                            continue;
-                        }
-                        /**
-                         * @var MethodCall $expr
-                         */
-                        $name = $expr->name;
-                        $nonReferenceReturns = isset($repository->getNonReferenceReturnMethods()[$name]) ?:0;
-                        $referenceReturns = isset($repository->getReferenceReturnMethods()[$name]) ?:0;
+            $warnings = array_merge($warnings, $this->checkFile($file->getPathname(), $repository));
+        }
 
-                        if ($nonReferenceReturns > 0 && $referenceReturns === 0) {
-                            // we know it is not ok!
-                            $warnings[] = new NonReferenceAssignmentWarning($file->getFilename(), $expr->getLine(), 1.0);
-                        }
+        return $warnings;
+    }
+
+    private function checkFile($path, MethodRepository $repository)
+    {
+        $warnings = [];
+        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $nodes = $parser->parse(file_get_contents($path));
+        foreach ($nodes as $node) {
+            if (false === $node instanceof Class_) {
+                continue;
+            }
+            /**
+             * @var Class_ $node
+             */
+            $methods = $node->getMethods();
+            foreach ($methods as $method) {
+                $stmts = $method->getStmts();
+                foreach ($stmts as $stmt) {
+                    if (false === $stmt instanceof AssignRef) {
+                        continue;
+                    }
+                    /**
+                     * @var AssignRef $stmt
+                     */
+                    $expr = $stmt->expr;
+                    if (false === $expr instanceof MethodCall) {
+                        continue;
+                    }
+                    /**
+                     * @var MethodCall $expr
+                     */
+                    $name = $expr->name;
+                    $nonReferenceReturns = isset($repository->getNonReferenceReturnMethods()[$name]) ?: 0;
+                    $referenceReturns = isset($repository->getReferenceReturnMethods()[$name]) ?: 0;
+
+                    if ($nonReferenceReturns > 0 && $referenceReturns === 0) {
+                        // we know it is not ok!
+                        $warnings[] = new NonReferenceAssignmentWarning(basename($path), $expr->getLine(), 1.0);
                     }
                 }
             }
         }
+
 
         return $warnings;
 
@@ -115,8 +118,7 @@ class ReferenceAssignmentChecker
         $finder
             ->in($classRepositoryPath)
             ->files()
-            ->name('*.php')
-        ;
+            ->name('*.php');
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
 
         $referenceReturnMethods = [];
