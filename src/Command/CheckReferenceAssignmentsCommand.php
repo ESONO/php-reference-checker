@@ -11,20 +11,21 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use umulmrum\PhpReferenceChecker\Checker\ReferenceAssignmentChecker;
+use umulmrum\PhpReferenceChecker\Runner\Runner;
 
 class CheckReferenceAssignmentsCommand extends Command
 {
     /**
-     * @var ReferenceAssignmentChecker
+     * @var Runner
      */
-    private $referenceAssignmentChecker;
+    private $runner;
 
     /**
-     * @param ReferenceAssignmentChecker $referenceAssignmentChecker
+     * @param Runner $runner
      */
-    public function __construct(ReferenceAssignmentChecker $referenceAssignmentChecker)
+    public function __construct(Runner $runner)
     {
-        $this->referenceAssignmentChecker = $referenceAssignmentChecker;
+        $this->runner = $runner;
 
         parent::__construct();
     }
@@ -61,7 +62,7 @@ EOF
             throw new InvalidArgumentException('classRepositoryPath argument is required.');
         }
 
-        $warnings = $this->referenceAssignmentChecker->check($targetFilePath, $classRepositoryPath);
+        $warnings = $this->runner->runCheck($targetFilePath, $classRepositoryPath);
 
         if (0 === count($warnings)) {
             $output->writeln('No invalid reference assignments found.');

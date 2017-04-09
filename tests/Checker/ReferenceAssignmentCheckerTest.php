@@ -4,7 +4,6 @@
 namespace umulmrum\PhpReferenceChecker\Checker;
 
 
-use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use umulmrum\PhpReferenceChecker\DataModel\NonReferenceAssignmentWarning;
@@ -20,6 +19,9 @@ class ReferenceAssignmentCheckerTest extends TestCase
      */
     private $actualResult;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function tearDown()
     {
         parent::tearDown();
@@ -33,7 +35,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
             __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerFixture.php',
-            __DIR__.'/../fixtures/FileAndFolder'
+            include __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php'
         );
         $this->thenTheMaxSettingLevelShouldBeFalseOrAt(3000);
     }
@@ -43,7 +45,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
             __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerFixture.php',
-            __DIR__ . '/../fixtures/FileAndFolder'
+            include __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
             'ReferenceAssignmentCheckerFixture.php',
@@ -57,7 +59,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
             __DIR__ . '/../fixtures/FileAndFolder',
-            __DIR__ . '/../fixtures/FileAndFolder'
+            include __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
             'ReferenceAssignmentCheckerFixture.php',
@@ -71,7 +73,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
             __DIR__.'/../fixtures/Certainty/50Percent.php',
-            __DIR__.'/../fixtures/Certainty/50Percent.php'
+            include __DIR__ . '/../fixtures/Certainty/50PercentRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
             '50Percent.php',
@@ -85,7 +87,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
             __DIR__.'/../fixtures/Certainty/25Percent.php',
-            __DIR__.'/../fixtures/Certainty/25Percent.php'
+            include __DIR__ . '/../fixtures/Certainty/25PercentRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
             '25Percent.php',
@@ -99,7 +101,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
             __DIR__.'/../fixtures/Certainty/Sure.php',
-            __DIR__.'/../fixtures/Certainty/Sure.php'
+            include __DIR__ . '/../fixtures/Certainty/SureRepository.php'
         );
         $this->thenIShouldReceiveNoWarning();
     }

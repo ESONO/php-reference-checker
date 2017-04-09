@@ -6,12 +6,21 @@
 
     <services>
         <service id="command.check_reference_assignments" class="umulmrum\PhpReferenceChecker\Command\CheckReferenceAssignmentsCommand">
-            <argument type="service" id="reference_assignment_checker"/>
+            <argument type="service" id="runner"/>
             <tag name="console.command" />
         </service>
 
         <service id="reference_assignment_checker" class="umulmrum\PhpReferenceChecker\Checker\ReferenceAssignmentChecker">
             <argument type="service" id="logger"/>
+        </service>
+
+        <service id="method_repository_builder" class="umulmrum\PhpReferenceChecker\Repository\MethodRepositoryBuilderImpl">
+            <argument type="service" id="logger"/>
+        </service>
+
+        <service id="runner" class="umulmrum\PhpReferenceChecker\Runner\Runner">
+            <argument type="service" id="method_repository_builder"/>
+            <argument type="service" id="reference_assignment_checker"/>
         </service>
     </services>
 

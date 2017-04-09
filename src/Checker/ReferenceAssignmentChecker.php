@@ -4,14 +4,12 @@
 namespace umulmrum\PhpReferenceChecker\Checker;
 
 
-use PhpParser\Error;
 use PhpParser\Node\Expr\AssignRef;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\ParserFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Traversable;
 use umulmrum\PhpReferenceChecker\DataModel\MethodRepository;
 use umulmrum\PhpReferenceChecker\DataModel\NonReferenceAssignmentWarning;
@@ -23,6 +21,9 @@ class ReferenceAssignmentChecker
      */
     private $logger;
 
+    /**
+     * @param LoggerInterface $logger
+     */
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -30,16 +31,15 @@ class ReferenceAssignmentChecker
 
     /**
      * @param string $targetPath
-     * @param string $classRepositoryPath
+     * @param MethodRepository $methodRepository
      *
      * @return NonReferenceAssignmentWarning[]
      */
-    public function check($targetPath, $classRepositoryPath)
+    public function check($targetPath, MethodRepository $methodRepository)
     {
         $this->init();
-        $repo = $this->buildMethodRepository($classRepositoryPath);
 
-        return $this->checkTargetPath($targetPath, $repo);
+        return $this->checkTargetPath($targetPath, $methodRepository);
     }
 
     private function init()
@@ -79,6 +79,12 @@ class ReferenceAssignmentChecker
         return $warnings;
     }
 
+    /**
+     * @param string $path
+     * @param MethodRepository $repository
+     *
+     * @return NonReferenceAssignmentWarning[]
+     */
     private function checkFile($path, MethodRepository $repository)
     {
         $warnings = [];
@@ -135,68 +141,5 @@ class ReferenceAssignmentChecker
         }
 
         return $warnings;
-    }
-
-    /**
-     * @param $classRepositoryPath
-     *
-     * @return MethodRepository
-     */
-    private function buildMethodRepository($classRepositoryPath)
-    {
-        $this->logger->info('buildMethodRepository: start');
-        if (is_file($classRepositoryPath)) {
-            $this->logger->info('buildMethodRepository: end');
-            $repo = new MethodRepository([], []);
-
-            $this->addToRepository($classRepositoryPath, $repo);
-
-            return $repo;
-        }
-        $finder = new Finder();
-        $finder
-            ->in($classRepositoryPath)
-            ->files()
-            ->name('*.php');
-
-
-        $repo = new MethodRepository([], []);
-        foreach ($finder as $file) {
-            $this->addToRepository($file->getPathname(), $repo);
-        }
-        $this->logger->info('buildMethodRepository: end');
-
-        return $repo;
-    }
-
-    /**
-     * @param $filePath
-     * @param MethodRepository $repository
-     */
-    private function addToRepository($filePath, MethodRepository $repository)
-    {
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
-        try {
-            $nodes = $parser->parse(file_get_contents($filePath));
-        } catch (Error $e) {
-            $this->logger->warning($filePath . ': ' . $e->getMessage());
-            return;
-        }
-
-        foreach ($nodes as $node) {
-            if (false === $node instanceof Class_) {
-                continue; // TODO check functions defined outside of classes
-            }
-            /**
-             * @var Class_ $node
-             */
-            foreach ($node->getMethods() as $method) {
-                if (true === $method->byRef) {
-                    $repository->addReferenceReturnMethod($method->name);
-                } else {
-                    $repository->addNonReferenceReturnMethod($method->name);
-                }
-            }
-        }
     }
 }
