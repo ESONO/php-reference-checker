@@ -12,6 +12,7 @@ use PhpParser\ParserFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Traversable;
 use umulmrum\PhpReferenceChecker\DataModel\MethodRepository;
 use umulmrum\PhpReferenceChecker\DataModel\NonReferenceAssignmentWarning;
 
@@ -93,7 +94,7 @@ class ReferenceAssignmentChecker
             $methods = $node->getMethods();
             foreach ($methods as $method) {
                 $stmts = $method->getStmts();
-                if (!is_iterable($stmts)) {
+                if (false === $stmts instanceof Traversable && false === is_array($stmts)) {
                     continue;
                 }
                 foreach ($stmts as $stmt) {
