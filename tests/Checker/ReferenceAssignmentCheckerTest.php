@@ -6,6 +6,7 @@ namespace umulmrum\PhpReferenceChecker\Checker;
 
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use umulmrum\PhpReferenceChecker\DataModel\NonReferenceAssignmentWarning;
 
 class ReferenceAssignmentCheckerTest extends TestCase
@@ -93,9 +94,19 @@ class ReferenceAssignmentCheckerTest extends TestCase
         );
     }
 
+    public function testSure()
+    {
+        $this->givenAReferenceAssignmentChecker();
+        $this->whenICallCheckOn(
+            __DIR__.'/../fixtures/Certainty/Sure.php',
+            __DIR__.'/../fixtures/Certainty/Sure.php'
+        );
+        $this->thenIShouldReceiveNoWarning();
+    }
+
     private function givenAReferenceAssignmentChecker()
     {
-        $this->checker = new ReferenceAssignmentChecker(new Logger('test'));
+        $this->checker = new ReferenceAssignmentChecker(new NullLogger());
     }
 
     private function whenICallCheckOn($checkFilePath, $repoPath)
@@ -116,5 +127,10 @@ class ReferenceAssignmentCheckerTest extends TestCase
     {
         $expected = [$level, false];
         static::assertContains(ini_get('xdebug.max_nesting_level'), $expected);
+    }
+
+    private function thenIShouldReceiveNoWarning()
+    {
+        static::assertEmpty($this->actualResult);
     }
 }
