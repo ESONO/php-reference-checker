@@ -1,8 +1,6 @@
 <?php
 
-
 namespace umulmrum\PhpReferenceChecker\Repository;
-
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Closure;

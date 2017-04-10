@@ -3,7 +3,6 @@
 namespace umulmrum\PhpReferenceChecker\Repository;
 
 use PhpParser\Error;
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use Psr\Log\LoggerInterface;
