@@ -4,15 +4,10 @@
 namespace umulmrum\PhpReferenceChecker\Checker;
 
 
-use PhpParser\Node\Expr\AssignRef;
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use Psr\Log\LoggerInterface;
-use SebastianBergmann\CodeCoverage\Report\Xml\Node;
 use Symfony\Component\Finder\Finder;
-use Traversable;
 use umulmrum\PhpReferenceChecker\DataModel\MethodRepository;
 use umulmrum\PhpReferenceChecker\DataModel\NonReferenceAssignmentWarning;
 
