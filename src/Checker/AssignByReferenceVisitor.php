@@ -1,8 +1,6 @@
 <?php
 
-
 namespace umulmrum\PhpReferenceChecker\Checker;
-
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\AssignRef;
@@ -13,7 +11,6 @@ use umulmrum\PhpReferenceChecker\DataModel\NonReferenceAssignmentWarning;
 
 class AssignByReferenceVisitor extends NodeVisitorAbstract
 {
-
     /**
      * @var array
      */
@@ -34,7 +31,7 @@ class AssignByReferenceVisitor extends NodeVisitorAbstract
      */
     public function __construct(array &$warnings, MethodRepository $repository, $path)
     {
-        $this->warnings =& $warnings;
+        $this->warnings = &$warnings;
         $this->repository = $repository;
         $this->path = $path;
     }
@@ -63,6 +60,7 @@ class AssignByReferenceVisitor extends NodeVisitorAbstract
         if ($referenceReturns === 0 && $nonReferenceReturns > 0) {
             // we know it is not ok!
             $this->warnings[] = new NonReferenceAssignmentWarning(basename($this->path), $expr->getLine(), 1.0);
+
             return null;
         }
         if ($referenceReturns > 0 && $nonReferenceReturns > 0) {
@@ -72,6 +70,7 @@ class AssignByReferenceVisitor extends NodeVisitorAbstract
                 $expr->getLine(),
                 $referenceReturns / ($nonReferenceReturns + $referenceReturns)
             );
+
             return null;
         }
         // todo: handle unknown method names

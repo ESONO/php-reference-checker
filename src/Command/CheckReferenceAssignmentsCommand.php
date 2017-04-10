@@ -1,8 +1,6 @@
 <?php
 
-
 namespace umulmrum\PhpReferenceChecker\Command;
-
 
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
@@ -10,7 +8,6 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use umulmrum\PhpReferenceChecker\Checker\ReferenceAssignmentChecker;
 use umulmrum\PhpReferenceChecker\Runner\Runner;
 
 class CheckReferenceAssignmentsCommand extends Command
@@ -30,9 +27,8 @@ class CheckReferenceAssignmentsCommand extends Command
         parent::__construct();
     }
 
-
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -50,7 +46,7 @@ EOF
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

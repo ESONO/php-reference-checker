@@ -1,4 +1,5 @@
 <?php
+
 namespace umulmrum\PhpReferenceChecker\Repository;
 
 use umulmrum\PhpReferenceChecker\DataModel\MethodRepository;

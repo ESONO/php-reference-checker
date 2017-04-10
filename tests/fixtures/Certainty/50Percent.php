@@ -1,25 +1,29 @@
 <?php
 
-class FiftyPercentOne {
+class FiftyPercentOne
+{
     public function foo()
     {
         return 'foo';
     }
 }
 
-class FiftyPercentTwo {
+class FiftyPercentTwo
+{
     public function &foo()
     {
         $foo = 'foo';
+
         return $foo;
     }
 }
 
-class FiftyPercentCaller {
+class FiftyPercentCaller
+{
     public function caller()
     {
         $cls = new FiftyPercentOne();
         $foo = '';
-        $foo =& $cls->foo();
+        $foo = &$cls->foo();
     }
 }

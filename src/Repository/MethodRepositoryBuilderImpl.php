@@ -1,8 +1,6 @@
 <?php
 
-
 namespace umulmrum\PhpReferenceChecker\Repository;
-
 
 use PhpParser\Error;
 use PhpParser\Node\Stmt\Class_;
@@ -36,7 +34,8 @@ class MethodRepositoryBuilderImpl implements MethodRepositoryBuilder
         $this->logger->info('build: start');
         $repo = new MethodRepository([], []);
         if (false === file_exists($path)) {
-            $this->logger->warning('Path not found: ' . $path);
+            $this->logger->warning('Path not found: '.$path);
+
             return $repo;
         }
         if (is_file($path)) {
@@ -51,7 +50,6 @@ class MethodRepositoryBuilderImpl implements MethodRepositoryBuilder
             ->files()
             ->name('*.php');
 
-
         foreach ($finder as $file) {
             if (file_exists($file)) {
                 $this->addToRepository($file->getPathname(), $repo);
@@ -63,7 +61,7 @@ class MethodRepositoryBuilderImpl implements MethodRepositoryBuilder
     }
 
     /**
-     * @param string $filePath
+     * @param string           $filePath
      * @param MethodRepository $repository
      */
     private function addToRepository($filePath, MethodRepository $repository)
@@ -72,7 +70,8 @@ class MethodRepositoryBuilderImpl implements MethodRepositoryBuilder
         try {
             $nodes = $parser->parse(file_get_contents($filePath));
         } catch (Error $e) {
-            $this->logger->warning($filePath . ': ' . $e->getMessage());
+            $this->logger->warning($filePath.': '.$e->getMessage());
+
             return;
         }
 
