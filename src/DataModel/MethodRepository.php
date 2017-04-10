@@ -1,11 +1,10 @@
 <?php
 
-
 namespace umulmrum\PhpReferenceChecker\DataModel;
 
 /**
  * MethodRepository represents a collection of method names with reference
- * returns and non reference returns and their counts
+ * returns and non reference returns and their counts.
  */
 class MethodRepository
 {
@@ -19,7 +18,6 @@ class MethodRepository
     private $nonReferenceReturnMethods;
 
     /**
-     * MethodRepository constructor.
      * @param array $referenceReturnMethods
      * @param array $nonReferenceReturnMethods
      */
@@ -50,7 +48,7 @@ class MethodRepository
         if (false === isset($this->referenceReturnMethods[$methodName])) {
             $this->referenceReturnMethods[$methodName] = 0;
         }
-        $this->referenceReturnMethods[$methodName]++;
+        ++$this->referenceReturnMethods[$methodName];
     }
 
     public function addNonReferenceReturnMethod($methodName)
@@ -58,6 +56,6 @@ class MethodRepository
         if (false === isset($this->nonReferenceReturnMethods[$methodName])) {
             $this->nonReferenceReturnMethods[$methodName] = 0;
         }
-        $this->nonReferenceReturnMethods[$methodName]++;
+        ++$this->nonReferenceReturnMethods[$methodName];
     }
 }

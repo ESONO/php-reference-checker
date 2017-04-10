@@ -1,25 +1,29 @@
 <?php
 
-class SureOne {
+class SureOne
+{
     public function &foo()
     {
         return 'foo';
     }
 }
 
-class SureTwo {
+class SureTwo
+{
     public function &foo()
     {
         $foo = 'foo';
+
         return $foo;
     }
 }
 
-class SureCaller {
+class SureCaller
+{
     public function caller()
     {
         $cls = new SureOne();
         $foo = '';
-        $foo =& $cls->foo();
+        $foo = &$cls->foo();
     }
 }

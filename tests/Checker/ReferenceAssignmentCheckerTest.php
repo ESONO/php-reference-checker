@@ -1,8 +1,6 @@
 <?php
 
-
 namespace umulmrum\PhpReferenceChecker\Checker;
-
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -20,7 +18,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
     private $actualResult;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function tearDown()
     {
@@ -35,7 +33,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
             __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerFixture.php',
-            include __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php'
+            include __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php'
         );
         $this->thenTheMaxSettingLevelShouldBeFalseOrAt(3000);
     }
@@ -44,8 +42,8 @@ class ReferenceAssignmentCheckerTest extends TestCase
     {
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
-            __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerFixture.php',
-            include __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php'
+            __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerFixture.php',
+            include __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
             'ReferenceAssignmentCheckerFixture.php',
@@ -58,8 +56,8 @@ class ReferenceAssignmentCheckerTest extends TestCase
     {
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
-            __DIR__ . '/../fixtures/FileAndFolder',
-            include __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php'
+            __DIR__.'/../fixtures/FileAndFolder',
+            include __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
             'ReferenceAssignmentCheckerFixture.php',
@@ -73,11 +71,11 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
             __DIR__.'/../fixtures/Certainty/50Percent.php',
-            include __DIR__ . '/../fixtures/Certainty/50PercentRepository.php'
+            include __DIR__.'/../fixtures/Certainty/50PercentRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
             '50Percent.php',
-            23,
+            27,
             0.5
         );
     }
@@ -87,11 +85,11 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
             __DIR__.'/../fixtures/Certainty/25Percent.php',
-            include __DIR__ . '/../fixtures/Certainty/25PercentRepository.php'
+            include __DIR__.'/../fixtures/Certainty/25PercentRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
             '25Percent.php',
-            37,
+            43,
             0.25
         );
     }
@@ -101,7 +99,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
             __DIR__.'/../fixtures/Certainty/Sure.php',
-            include __DIR__ . '/../fixtures/Certainty/SureRepository.php'
+            include __DIR__.'/../fixtures/Certainty/SureRepository.php'
         );
         $this->thenIShouldReceiveNoWarning();
     }
@@ -111,11 +109,11 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->givenAReferenceAssignmentChecker();
         $this->whenICallCheckOn(
             __DIR__.'/../fixtures/Blocks/Blocks.php',
-            include __DIR__ . '/../fixtures/Blocks/BlocksRepository.php'
+            include __DIR__.'/../fixtures/Blocks/BlocksRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
             'Blocks.php',
-            18,
+            19,
             1.0
         );
     }
@@ -134,7 +132,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
     {
         static::assertEquals(
             [
-                new NonReferenceAssignmentWarning($file, $line, $certainty)
+                new NonReferenceAssignmentWarning($file, $line, $certainty),
             ],
             $this->actualResult);
     }

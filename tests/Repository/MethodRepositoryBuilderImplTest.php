@@ -1,10 +1,7 @@
 <?php
 
-
 namespace umulmrum\PhpReferenceChecker\Repository;
 
-
-use function Composer\Autoload\includeFile;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use umulmrum\PhpReferenceChecker\DataModel\MethodRepository;
@@ -21,7 +18,7 @@ class MethodRepositoryBuilderImplTest extends TestCase
     private $actualResult;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function tearDown()
     {
@@ -32,7 +29,7 @@ class MethodRepositoryBuilderImplTest extends TestCase
     }
 
     /**
-     * @param string $path
+     * @param string           $path
      * @param MethodRepository $expectedResult
      *
      * @dataProvider getBuildData
@@ -63,20 +60,20 @@ class MethodRepositoryBuilderImplTest extends TestCase
     {
         return [
             [
-                __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerFixture.php',
-                include __DIR__ . '/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php',
+                __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerFixture.php',
+                include __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php',
             ],
             [
                 __DIR__.'/../fixtures/Certainty/50Percent.php',
-                include __DIR__ . '/../fixtures/Certainty/50PercentRepository.php',
+                include __DIR__.'/../fixtures/Certainty/50PercentRepository.php',
             ],
             [
                 __DIR__.'/../fixtures/Certainty/25Percent.php',
-                include __DIR__ . '/../fixtures/Certainty/25PercentRepository.php',
+                include __DIR__.'/../fixtures/Certainty/25PercentRepository.php',
             ],
             [
                 __DIR__.'/../fixtures/Certainty/Sure.php',
-                include __DIR__ . '/../fixtures/Certainty/SureRepository.php',
+                include __DIR__.'/../fixtures/Certainty/SureRepository.php',
             ],
             [
                 __DIR__.'/../fixtures/Functions/Functions.php',
@@ -94,7 +91,7 @@ class MethodRepositoryBuilderImplTest extends TestCase
 
     private function whenICallBuildOnABrokenSymlink()
     {
-        $this->actualResult = $this->methodRepositoryBuilderImpl->build(__DIR__ . '/../fixtures/Symlink/BrokenSymlink.php');
+        $this->actualResult = $this->methodRepositoryBuilderImpl->build(__DIR__.'/../fixtures/Symlink/BrokenSymlink.php');
     }
 
     private function thenAnEmptyResultShouldBeReturned()
@@ -104,7 +101,7 @@ class MethodRepositoryBuilderImplTest extends TestCase
 
     public function testIgnoreBrokenSymlinksInDeepPath()
     {
-        $path = __DIR__ . '/../fixtures/Symlink';
+        $path = __DIR__.'/../fixtures/Symlink';
         $this->givenAMethodRepositoryBuilderImpl();
         $this->whenICallBuild($path);
         $this->thenTheIndexWithoutSymlinkShouldBeBuilt($path);
@@ -112,6 +109,6 @@ class MethodRepositoryBuilderImplTest extends TestCase
 
     private function thenTheIndexWithoutSymlinkShouldBeBuilt($path)
     {
-        static::assertEquals(include $path . '/SomeValidClassRepository.php', $this->actualResult);
+        static::assertEquals(include $path.'/SomeValidClassRepository.php', $this->actualResult);
     }
 }

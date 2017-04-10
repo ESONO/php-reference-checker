@@ -1,8 +1,6 @@
 <?php
 
-
 namespace umulmrum\PhpReferenceChecker\Runner;
-
 
 use umulmrum\PhpReferenceChecker\Checker\ReferenceAssignmentChecker;
 use umulmrum\PhpReferenceChecker\DataModel\NonReferenceAssignmentWarning;
@@ -20,7 +18,7 @@ class Runner
     private $referenceAssignmentChecker;
 
     /**
-     * @param MethodRepositoryBuilder $methodRepositoryBuilder
+     * @param MethodRepositoryBuilder    $methodRepositoryBuilder
      * @param ReferenceAssignmentChecker $referenceAssignmentChecker
      */
     public function __construct(

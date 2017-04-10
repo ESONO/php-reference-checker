@@ -10,6 +10,6 @@ class ReferenceAssignmentCheckerFixture
 
     public function assignByReference()
     {
-        $x =& $this->returnNoReference();
+        $x = &$this->returnNoReference();
     }
 }

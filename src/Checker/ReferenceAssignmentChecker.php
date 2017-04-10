@@ -1,8 +1,6 @@
 <?php
 
-
 namespace umulmrum\PhpReferenceChecker\Checker;
-
 
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
@@ -27,7 +25,7 @@ class ReferenceAssignmentChecker
     }
 
     /**
-     * @param string $targetPath
+     * @param string           $targetPath
      * @param MethodRepository $methodRepository
      *
      * @return NonReferenceAssignmentWarning[]
@@ -77,7 +75,7 @@ class ReferenceAssignmentChecker
     }
 
     /**
-     * @param string $path
+     * @param string           $path
      * @param MethodRepository $repository
      *
      * @return NonReferenceAssignmentWarning[]
