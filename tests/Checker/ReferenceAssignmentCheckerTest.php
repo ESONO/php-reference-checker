@@ -46,7 +46,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
             include __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
-            'ReferenceAssignmentCheckerFixture.php',
+            '/ReferenceAssignmentCheckerFixture.php',
             13,
             1.0
         );
@@ -60,7 +60,21 @@ class ReferenceAssignmentCheckerTest extends TestCase
             include __DIR__.'/../fixtures/FileAndFolder/ReferenceAssignmentCheckerRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
-            'ReferenceAssignmentCheckerFixture.php',
+            '/ReferenceAssignmentCheckerFixture.php',
+            13,
+            1.0
+        );
+    }
+
+    public function testSubDirInWarning()
+    {
+        $this->givenAReferenceAssignmentChecker();
+        $this->whenICallCheckOn(
+            __DIR__.'/../fixtures/Path',
+            include __DIR__.'/../fixtures/Path/Subdir/SubPathRepository.php'
+        );
+        $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
+            '/Subdir/SubPathFixture.php',
             13,
             1.0
         );
@@ -74,7 +88,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
             include __DIR__.'/../fixtures/Certainty/50PercentRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
-            '50Percent.php',
+            '/50Percent.php',
             27,
             0.5
         );
@@ -88,7 +102,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
             include __DIR__.'/../fixtures/Certainty/25PercentRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
-            '25Percent.php',
+            '/25Percent.php',
             43,
             0.25
         );
@@ -112,7 +126,7 @@ class ReferenceAssignmentCheckerTest extends TestCase
             include __DIR__.'/../fixtures/Blocks/BlocksRepository.php'
         );
         $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
-            'Blocks.php',
+            '/Blocks.php',
             19,
             1.0
         );

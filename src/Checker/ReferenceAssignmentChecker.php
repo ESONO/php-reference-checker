@@ -55,8 +55,9 @@ class ReferenceAssignmentChecker
         $this->logger->info('checkTargetPath: start');
         if (is_file($targetPath)) {
             $this->logger->info('checkTargetPath: end');
+            $fileWarnings = $this->checkFile($targetPath, $repository, '');
 
-            return $this->checkFile($targetPath, $repository);
+            return $this->removePaths($fileWarnings);
         }
         $finder = new Finder();
 
@@ -67,7 +68,9 @@ class ReferenceAssignmentChecker
             ->name('*.php');
 
         foreach ($finder as $file) {
-            $warnings = array_merge($warnings, $this->checkFile($file->getPathname(), $repository));
+            $fileWarnings = $this->checkFile($file->getPathname(), $repository);
+            $fileWarnings = $this->shortenPaths($fileWarnings, $targetPath);
+            $warnings = array_merge($warnings, $fileWarnings);
         }
         $this->logger->info('checkTargetPath: end');
 
@@ -90,5 +93,48 @@ class ReferenceAssignmentChecker
         $traverser->traverse($nodes);
 
         return $warnings;
+    }
+
+    /**
+     * @param NonReferenceAssignmentWarning[] $warnings
+     * @param string                          $basePath
+     *
+     * @return NonReferenceAssignmentWarning[]
+     */
+    private function shortenPaths(array $warnings, $basePath)
+    {
+        $shortenedWarnings = array_map(
+            function (NonReferenceAssignmentWarning $warning) use ($basePath) {
+                return new NonReferenceAssignmentWarning(
+                    substr($warning->getFile(), strlen($basePath)),
+                    $warning->getLine(),
+                    $warning->getProbability()
+                );
+            },
+            $warnings
+        );
+
+        return $shortenedWarnings;
+    }
+
+    /**
+     * @param NonReferenceAssignmentWarning[] $warnings
+     *
+     * @return NonReferenceAssignmentWarning[]
+     */
+    private function removePaths(array $warnings)
+    {
+        $shortenedWarnings = array_map(
+            function (NonReferenceAssignmentWarning $warning) {
+                return new NonReferenceAssignmentWarning(
+                    '/'.basename($warning->getFile()),
+                    $warning->getLine(),
+                    $warning->getProbability()
+                );
+            },
+            $warnings
+        );
+
+        return $shortenedWarnings;
     }
 }
