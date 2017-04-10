@@ -4,6 +4,7 @@
 namespace umulmrum\PhpReferenceChecker\Repository;
 
 
+use function Composer\Autoload\includeFile;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use umulmrum\PhpReferenceChecker\DataModel\MethodRepository;
@@ -78,5 +79,35 @@ class MethodRepositoryBuilderImplTest extends TestCase
                 include __DIR__ . '/../fixtures/Certainty/SureRepository.php',
             ],
         ];
+    }
+
+    public function testIgnoreBrokenSymlinks()
+    {
+        $this->givenAMethodRepositoryBuilderImpl();
+        $this->whenICallBuildOnABrokenSymlink();
+        $this->thenAnEmptyResultShouldBeReturned();
+    }
+
+    private function whenICallBuildOnABrokenSymlink()
+    {
+        $this->actualResult = $this->methodRepositoryBuilderImpl->build(__DIR__ . '/../fixtures/Symlink/BrokenSymlink.php');
+    }
+
+    private function thenAnEmptyResultShouldBeReturned()
+    {
+        static::assertEquals(new MethodRepository([], []), $this->actualResult);
+    }
+
+    public function testIgnoreBrokenSymlinksInDeepPath()
+    {
+        $path = __DIR__ . '/../fixtures/Symlink';
+        $this->givenAMethodRepositoryBuilderImpl();
+        $this->whenICallBuild($path);
+        $this->thenTheIndexWithoutSymlinkShouldBeBuilt($path);
+    }
+
+    private function thenTheIndexWithoutSymlinkShouldBeBuilt($path)
+    {
+        static::assertEquals(include $path . '/SomeValidClassRepository.php', $this->actualResult);
     }
 }

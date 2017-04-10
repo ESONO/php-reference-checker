@@ -34,10 +34,13 @@ class MethodRepositoryBuilderImpl implements MethodRepositoryBuilder
     public function build($path)
     {
         $this->logger->info('build: start');
+        $repo = new MethodRepository([], []);
+        if (false === file_exists($path)) {
+            $this->logger->warning('Path not found: ' . $path);
+            return $repo;
+        }
         if (is_file($path)) {
             $this->logger->info('build: end');
-            $repo = new MethodRepository([], []);
-
             $this->addToRepository($path, $repo);
 
             return $repo;
@@ -49,9 +52,10 @@ class MethodRepositoryBuilderImpl implements MethodRepositoryBuilder
             ->name('*.php');
 
 
-        $repo = new MethodRepository([], []);
         foreach ($finder as $file) {
-            $this->addToRepository($file->getPathname(), $repo);
+            if (file_exists($file)) {
+                $this->addToRepository($file->getPathname(), $repo);
+            }
         }
         $this->logger->info('buildMethodRepository: end');
 
