@@ -7,8 +7,10 @@ namespace umulmrum\PhpReferenceChecker\Checker;
 use PhpParser\Node\Expr\AssignRef;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use Psr\Log\LoggerInterface;
+use SebastianBergmann\CodeCoverage\Report\Xml\Node;
 use Symfony\Component\Finder\Finder;
 use Traversable;
 use umulmrum\PhpReferenceChecker\DataModel\MethodRepository;
@@ -89,56 +91,10 @@ class ReferenceAssignmentChecker
     {
         $warnings = [];
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new AssignByReferenceVisitor($warnings, $repository, $path));
         $nodes = $parser->parse(file_get_contents($path));
-        foreach ($nodes as $node) {
-            if (false === $node instanceof Class_) {
-                continue;
-            }
-            /**
-             * @var Class_ $node
-             */
-            $methods = $node->getMethods();
-            foreach ($methods as $method) {
-                $stmts = $method->getStmts();
-                if (false === $stmts instanceof Traversable && false === is_array($stmts)) {
-                    continue;
-                }
-                foreach ($stmts as $stmt) {
-                    if (false === $stmt instanceof AssignRef) {
-                        continue;
-                    }
-                    /**
-                     * @var AssignRef $stmt
-                     */
-                    $expr = $stmt->expr;
-                    if (false === $expr instanceof MethodCall) {
-                        continue;
-                    }
-                    /**
-                     * @var MethodCall $expr
-                     */
-                    $name = $expr->name;
-                    $nonReferenceReturns = isset($repository->getNonReferenceReturnMethods()[$name]) ? $repository->getNonReferenceReturnMethods()[$name] : 0;
-                    $referenceReturns = isset($repository->getReferenceReturnMethods()[$name]) ? $repository->getReferenceReturnMethods()[$name] : 0;
-
-                    if ($referenceReturns === 0 && $nonReferenceReturns > 0) {
-                        // we know it is not ok!
-                        $warnings[] = new NonReferenceAssignmentWarning(basename($path), $expr->getLine(), 1.0);
-                        continue;
-                    }
-                    if ($referenceReturns > 0 && $nonReferenceReturns > 0) {
-                        // this may be ok
-                        $warnings[] = new NonReferenceAssignmentWarning(
-                            basename($path),
-                            $expr->getLine(),
-                            $referenceReturns / ($nonReferenceReturns + $referenceReturns)
-                        );
-                        continue;
-                    }
-                    // todo: handle unknown method names
-                }
-            }
-        }
+        $traverser->traverse($nodes);
 
         return $warnings;
     }

@@ -106,6 +106,20 @@ class ReferenceAssignmentCheckerTest extends TestCase
         $this->thenIShouldReceiveNoWarning();
     }
 
+    public function testBlocks()
+    {
+        $this->givenAReferenceAssignmentChecker();
+        $this->whenICallCheckOn(
+            __DIR__.'/../fixtures/Blocks/Blocks.php',
+            include __DIR__ . '/../fixtures/Blocks/BlocksRepository.php'
+        );
+        $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
+            'Blocks.php',
+            18,
+            1.0
+        );
+    }
+
     private function givenAReferenceAssignmentChecker()
     {
         $this->checker = new ReferenceAssignmentChecker(new NullLogger());
