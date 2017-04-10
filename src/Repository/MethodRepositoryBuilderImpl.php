@@ -6,6 +6,7 @@ namespace umulmrum\PhpReferenceChecker\Repository;
 
 use PhpParser\Error;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
@@ -76,20 +77,8 @@ class MethodRepositoryBuilderImpl implements MethodRepositoryBuilder
             return;
         }
 
-        foreach ($nodes as $node) {
-            if (false === $node instanceof Class_) {
-                continue; // TODO check functions defined outside of classes
-            }
-            /**
-             * @var Class_ $node
-             */
-            foreach ($node->getMethods() as $method) {
-                if (true === $method->byRef) {
-                    $repository->addReferenceReturnMethod($method->name);
-                } else {
-                    $repository->addNonReferenceReturnMethod($method->name);
-                }
-            }
-        }
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new RepositoryBuilderNodeVisitor($repository));
+        $traverser->traverse($nodes);
     }
 }
