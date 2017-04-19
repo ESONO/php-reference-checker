@@ -59,14 +59,14 @@ class AssignByReferenceVisitor extends NodeVisitorAbstract
 
         if ($referenceReturns === 0 && $nonReferenceReturns > 0) {
             // we know it is not ok!
-            $this->warnings[] = new NonReferenceAssignmentWarning(basename($this->path), $expr->getLine(), 1.0);
+            $this->warnings[] = new NonReferenceAssignmentWarning($this->path, $expr->getLine(), 1.0);
 
             return null;
         }
         if ($referenceReturns > 0 && $nonReferenceReturns > 0) {
             // this may be ok
             $this->warnings[] = new NonReferenceAssignmentWarning(
-                basename($this->path),
+                $this->path,
                 $expr->getLine(),
                 $referenceReturns / ($nonReferenceReturns + $referenceReturns)
             );
