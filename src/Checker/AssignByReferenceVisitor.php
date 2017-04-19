@@ -53,7 +53,7 @@ class AssignByReferenceVisitor extends NodeVisitorAbstract
         /**
          * @var MethodCall $expr
          */
-        $name = $expr->name;
+        $name = mb_strtolower($expr->name);
         $nonReferenceReturns = isset($this->repository->getNonReferenceReturnMethods()[$name]) ? $this->repository->getNonReferenceReturnMethods()[$name] : 0;
         $referenceReturns = isset($this->repository->getReferenceReturnMethods()[$name]) ? $this->repository->getReferenceReturnMethods()[$name] : 0;
 

@@ -2,6 +2,6 @@
 
 return new \umulmrum\PhpReferenceChecker\DataModel\MethodRepository([
 ], [
-    'returnNoReference' => 1,
-    'assignByReference' => 1,
+    'returnnoreference' => 1,
+    'assignbyreference' => 1,
 ]);

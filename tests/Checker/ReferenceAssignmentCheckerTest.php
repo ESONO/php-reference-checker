@@ -52,6 +52,20 @@ class ReferenceAssignmentCheckerTest extends TestCase
         );
     }
 
+    public function testCaseInsensitiveCheck()
+    {
+        $this->givenAReferenceAssignmentChecker();
+        $this->whenICallCheckOn(
+            __DIR__.'/../fixtures/CaseSensitivity/CaseSensitivityFixture.php',
+            include __DIR__.'/../fixtures/CaseSensitivity/CaseSensitivityRepository.php'
+        );
+        $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
+            '/CaseSensitivityFixture.php',
+            13,
+            1.0
+        );
+    }
+
     public function testCheckOnDirectory()
     {
         $this->givenAReferenceAssignmentChecker();

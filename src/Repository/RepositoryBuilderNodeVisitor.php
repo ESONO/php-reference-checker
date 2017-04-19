@@ -37,9 +37,9 @@ class RepositoryBuilderNodeVisitor extends NodeVisitorAbstract
          * @var Closure|Function_|ClassMethod $node
          */
         if (true === $node->returnsByRef()) {
-            $this->repository->addReferenceReturnMethod($node->name);
+            $this->repository->addReferenceReturnMethod(mb_strtolower($node->name));
         } else {
-            $this->repository->addNonReferenceReturnMethod($node->name);
+            $this->repository->addNonReferenceReturnMethod(mb_strtolower($node->name));
         }
     }
 }
