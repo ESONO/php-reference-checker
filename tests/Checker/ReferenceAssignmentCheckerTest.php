@@ -146,6 +146,20 @@ class ReferenceAssignmentCheckerTest extends TestCase
         );
     }
 
+    public function testStaticCall()
+    {
+        $this->givenAReferenceAssignmentChecker();
+        $this->whenICallCheckOn(
+            __DIR__.'/../fixtures/Static/Static.php',
+            include __DIR__.'/../fixtures/Static/StaticRepository.php'
+        );
+        $this->thenIShouldReceiveANonReferenceAssignmentWarningWith(
+            '/Static.php',
+            7,
+            1.0
+        );
+    }
+
     private function givenAReferenceAssignmentChecker()
     {
         $this->checker = new ReferenceAssignmentChecker(new NullLogger());

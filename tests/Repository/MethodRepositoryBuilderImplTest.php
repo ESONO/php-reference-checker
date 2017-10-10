@@ -80,6 +80,10 @@ class MethodRepositoryBuilderImplTest extends TestCase
                 include __DIR__.'/../fixtures/Functions/FunctionsRepository.php',
             ],
             [
+                __DIR__.'/../fixtures/Static/Static.php',
+                include __DIR__.'/../fixtures/Static/StaticRepository.php',
+            ],
+            [
                 __DIR__.'/../fixtures/Closure/Closure.php',
                 include __DIR__.'/../fixtures/Closure/ClosureRepository.php',
             ],
