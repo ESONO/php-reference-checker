@@ -32,6 +32,9 @@ class RepositoryBuilderNodeVisitor extends NodeVisitorAbstract
         if (false === $node instanceof FunctionLike) {
             return null;
         }
+        if (true === $node instanceof Closure) {
+            return null;
+        }
 
         /**
          * @var Closure|Function_|ClassMethod $node
