@@ -5,6 +5,7 @@ namespace umulmrum\PhpReferenceChecker\Checker;
 use PhpParser\Node;
 use PhpParser\Node\Expr\AssignRef;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\NodeVisitorAbstract;
 use umulmrum\PhpReferenceChecker\DataModel\MethodRepository;
 use umulmrum\PhpReferenceChecker\DataModel\NonReferenceAssignmentWarning;
@@ -47,11 +48,11 @@ class AssignByReferenceVisitor extends NodeVisitorAbstract
          * @var AssignRef $node
          */
         $expr = $node->expr;
-        if (false === $expr instanceof MethodCall) {
+        if (false === $expr instanceof MethodCall && false === $expr instanceof StaticCall) {
             return null;
         }
         /**
-         * @var MethodCall $expr
+         * @var MethodCall|StaticCall $expr
          */
         $name = mb_strtolower($expr->name);
         $nonReferenceReturns = isset($this->repository->getNonReferenceReturnMethods()[$name]) ? $this->repository->getNonReferenceReturnMethods()[$name] : 0;
